@@ -6,3 +6,6 @@
 .idea/rSettings.xml
 .idea/vcs.xml
 .idea/workspace.xml
+*.json
+*.sqlite
+.vs/FHNW_FS20_Recommender System Retail/v15/.suo
