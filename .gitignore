@@ -1,2 +1,4 @@
 *.csv
 
+__pycache__/function_suit.cpython-37.pyc
+*.png
