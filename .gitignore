@@ -1,4 +1,3 @@
-.ipynb_checkpoints
 *.csv
 .idea/FHNW_FS20_Recommender System Retail.iml
 .idea/inspectionProfiles/profiles_settings.xml
@@ -7,3 +6,4 @@
 .idea/rSettings.xml
 .idea/vcs.xml
 *.png
+__pycache__/function_suit.cpython-37.pyc
