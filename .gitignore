@@ -7,3 +7,5 @@
 .idea/vcs.xml
 *.png
 __pycache__/function_suit.cpython-37.pyc
+*.pyc
+*.png
