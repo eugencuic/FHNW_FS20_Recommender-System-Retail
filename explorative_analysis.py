@@ -7,15 +7,23 @@ import squarify
 # Plots to analyze to understand setting for recommender
 
 def fig_prod_bought(data, safe):
+    font = {'family' : 'arial',
+            'weight' : 'light',
+            'size'   : 14}
+
+    plt.rc('font', **font)
+    plt.figure(figsize=(14,6))
+
+
     # number of times a product is bought
     # show the products most bought
     n_of_products_bought = data.product_name.value_counts()
     n_of_products_bought_20 = n_of_products_bought.nlargest(20)
 
-    plt.figure(figsize=(16,7))
     sns.barplot(x=n_of_products_bought_20.index, y=n_of_products_bought_20.values)
     plt.xlabel('Products most ordered')
     plt.ylabel('Number of Orders')
+    plt.title('Distribution of most bought products across all Transactions')
     plt.xticks(rotation=90)
 
     plt.show()
@@ -28,6 +36,13 @@ def fig_prod_bought(data, safe):
 
 
 def fig_prod_per_order(data, safe):
+
+    font = {'family' : 'arial',
+            'weight' : 'light',
+            'size'   : 14}
+
+    plt.rc('font', **font)
+    plt.figure(figsize=(14,6))
 
     # Number of products bought per order
     # first row = number of products per order, second row = how many orders
@@ -68,6 +83,12 @@ def fig_prod_per_order(data, safe):
 
 
 def fig_ord_per_department(data, safe):
+
+    font = {'family' : 'arial',
+            'weight' : 'light',
+            'size'   : 14}
+
+    plt.rc('font', **font)
     # Number of Orders per Department
     p_c = data.groupby('department')['product_name'].count().sort_values()
 
@@ -75,6 +96,7 @@ def fig_ord_per_department(data, safe):
     plt.figure(figsize=(16,9))
     squarify.plot(sizes=p_c.values, label=p_c.index, alpha=.8 )
     plt.axis('off')
+    plt.title('Visual representation of number of Products bought in Departments, \nwhere size of square is the relative size of bought products')
     plt.show() 
 
     if safe == 0:
@@ -85,6 +107,8 @@ def fig_ord_per_department(data, safe):
     # plot as a barplot
     plt.figure(figsize=(12,7))
     sns.barplot(x=p_c.values, y=p_c.index)
+    plt.title('Visual representation as bar blot of number of Products bought in Departments')
+    plt.xlabel('number of times bought (log)')
     plt.xscale('log')
     plt.show()
 
@@ -93,7 +117,6 @@ def fig_ord_per_department(data, safe):
     else:
         plt.savefig('departments_bar.png', bbox_inches='tight')
 
-
 def info_order_per_user(data):
 
     # Number of orders per user
@@ -101,3 +124,64 @@ def info_order_per_user(data):
 
     # Find the treshhold for the lowest 75% of data points
     print(n_of_ord_per_user.describe())
+
+def fig_n_of_ord_per_user(data):
+    font = {'family' : 'arial',
+            'weight' : 'bold',
+            'size'   : 14}
+
+    plt.rc('font', **font)
+    plt.figure(figsize=(16,8))
+
+    # Create data to be plot
+    n_of_ord_per_user = data.groupby('user_id')['order_id'].count().value_counts()
+
+    # Sort by biggest first
+    n_of_ord_per_user.sort_values(ascending=False)
+
+    # reset index to have a linear order of numbers
+    n_of_ord_per_user.reset_index(drop=True, inplace=True)
+
+    # set x-axis limit based on intput shape
+    xlen = len(n_of_ord_per_user)
+
+    plt.bar(((n_of_ord_per_user.index)/xlen)*100, n_of_ord_per_user, label='Orders per User', color='steelblue')
+    plt.legend(loc='best')
+    plt.xlabel('% of User')
+    plt.ylabel('Number of Orders per User')
+    plt.title('Distribution of Orders per User')
+
+    plt.show()
+
+def cal_limit_orders_per_user(data, threshold):
+    # Create data to be plot
+    n_of_ord_per_user = data.groupby('user_id')['order_id'].count().value_counts()
+
+    # Sort by biggest first
+    n_of_ord_per_user.sort_values(ascending=False)
+
+    # reset index to have a linear order of numbers
+    n_of_ord_per_user.reset_index(drop=True, inplace=True)
+
+    # find the value of orders based on input % 
+    cutoff = n_of_ord_per_user[int(len(n_of_ord_per_user)*(threshold/100))]
+
+    # calculate cutoff users
+    remainder = 100-threshold
+    print("Bei {} Käufen pro Kunden können {} Prozent der Kunden eliminiert werden".format(cutoff, remainder))
+
+    return cutoff
+
+######################### DEPRECIATED #########################
+
+# DEPRECIATED BECAUSE THE ANALYSES IS NOT NECESSARY
+def num_of_prod_per_department(data):
+    # Number of Products per Department
+    n_p = data.groupby('department')['product_name'].value_counts()
+    print(n_p.head(10))
+
+    # Number of purchases per Category / Subcategory
+    p_c_s = data.groupby('department')['aisle'].value_counts()
+    print(p_c_s.head(10))
+
+    del n_p, p_c_s
