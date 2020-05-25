@@ -256,8 +256,7 @@ def calc_optimal_fold(data, max_fold):
     plt.show()
 
 
-    def products_recommendations_mobelbased(user_id, predictions, original_purchases, n_of_recommendations):
-
+def products_recommendations_mobelbased(user_id, predictions, original_purchases, n_of_recommendations):
     original_purchases.loc[user_id].sort_values(ascending=False).head()
     products_user = original_purchases.loc[user_id]
     bought_products_user = products_user[products_user > 0].index
@@ -265,14 +264,24 @@ def calc_optimal_fold(data, max_fold):
 
     products_high_recommend = products_recommended.iloc[:n_of_recommendations].index
     recommendations = list(set(products_high_recommend) - set(bought_products_user))
-    len_frame = len(recommendations)
+    
 
+    return recommendations
+
+def recommedations_view(recommendations, item_lookup):
+    len_frame = len(recommendations)
 
     feature_list = ['product_id', 'product_name']
     zero_data = np.zeros(shape=(len_frame,len(feature_list)))
     results = pd.DataFrame(zero_data, columns=feature_list)
+
     for i in range(0,len_frame, 1):
         results.loc[i:i, 'product_id'] = recommendations[i]
-        results.loc[i:i, 'product_name'] = product_lookup(recommendations[i])
+        
+        product_id = str(recommendations[i])
+        df = item_lookup['product_name'].loc[item_lookup['product_id']== product_id]
+        product_name = df.iloc[0]
+
+        results.loc[i:i, 'product_name'] = product_name
 
     return results

@@ -76,8 +76,3 @@ def repeat_test(test,matrix,similarities,neighbours,masked_items,numberofruns,us
         res = res / numberofruns
         print('Average over {0} Users: {1}'.format(numberofruns,res))
 
-def product_lookup(product_id):
-    product_id = str(product_id)
-    df = item_lookup['product_name'].loc[item_lookup['product_id']== product_id]
-    product_name = df.iloc[0]
-    return product_name
