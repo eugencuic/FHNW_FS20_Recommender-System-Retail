@@ -1,4 +1,5 @@
 from recommender_ubcf import get_recommendations
+from recommender_ubcf import products_recommendations_mobelbased
 import numpy as np
 
 def precision(matrix,similarities,neighbours,masked_items,user,n):
@@ -76,3 +77,26 @@ def repeat_test(test,matrix,similarities,neighbours,masked_items,numberofruns,us
         res = res / numberofruns
         print('Average over {0} Users: {1}'.format(numberofruns,res))
 
+######################### MODEL BASED APPROACH #########################
+
+def evaluation_model_based_user(user_index, predicted_rating, masked_items, train_set_count, n_of_recommendations):
+ 
+    # calculate recommendations
+    rec = products_recommendations_mobelbased(user_index, predicted_rating, train_set_count, n_of_recommendations)
+
+    # get the items which were masked for the user
+    rating_index = np.where(masked_items[:,0] == user_index)
+    # get list
+    items_masked = list(masked_items[rating_index,:][0][:,1])
+
+    # turn list into array
+    items_masked = np.array(items_masked)
+
+    # compare both list and return lenght of matches
+
+    hits = len(set(rec).intersection(items_masked))
+
+    recall = hits / len(items_masked)
+    precision = hits / n_of_recommendations
+
+    return recall, precision
