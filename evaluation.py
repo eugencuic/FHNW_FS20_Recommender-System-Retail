@@ -99,4 +99,4 @@ def evaluation_model_based_user(user_index, predicted_rating, masked_items, trai
     recall = hits / len(items_masked)
     precision = hits / n_of_recommendations
 
-    return recall, precision
+    return  precision, recall
