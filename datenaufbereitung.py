@@ -2,37 +2,56 @@ import pandas as pd
 import numpy as np
 
 def reduce_products(data, top_percent):
+    """Selecting the top n Percent of Products which have been bought the most
+
+    Arguments:
+        data {DataFrame} -- Full Dataset with all Records
+        top_percent {float} -- Value between 0-1
+
+    Returns:
+        Dataframe -- Reduced Dataset with Records of only the top n Products
+    """    
     # number of products
-    n_of_products = data.product_name.nunique()
+    n_of_products = data.product_id.nunique()
+
+    # output
+    print('Total Number of Products: {0}'.format(n_of_products))
 
     # 20% is the regular percentage of reducing the products
     top_20 = int(n_of_products * top_percent)
 
     # select the top products
-    n_of_products_bought = data.product_name.value_counts()
+    n_of_products_bought = data.product_id.value_counts()
     prod_f = n_of_products_bought.nlargest(top_20)
     top_products = prod_f.index
 
     # filter the transactions only for the top products
-    data = data[(data.product_name.isin(top_products))]
+    data = data[(data.product_id.isin(top_products))]
 
-    # product most and least bought
-    print('Product most bought: {0}'.format(prod_f.nlargest(1)))
-    print('Product least bought (top 20%): {0}'.format(prod_f.nsmallest(1)))
+    # output
+    print('Number of Products after reduction: {0}'.format(top_20))
 
     return data
 
 def reduce_users_prod (data, number_of_products):
+    """Filtering the input dataset for user with at least n products
+
+    Arguments:
+        data {DataFrame} -- Full Dataset with all Records
+        number_of_products {int} -- Number of minimal Item per User
+
+    Returns:
+        DataFrame -- Reduced Dataset
+    """    
     # Number of purchases per User and Product
     n_of_purch_per_user = data.groupby(['user_id','product_id']).size()
 
     # Number of Product per User
     n_of_prod_per_user = n_of_purch_per_user.groupby('user_id').size()
 
-    # Users with most and least products
-    print('Users with most products: {0}'.format(n_of_prod_per_user.nlargest(5)))
-    print('Users with least products: {0}'.format(n_of_prod_per_user.nsmallest(5)))
-
+    # Output
+    print('No. of Records in input dataset: {0}'.format(data.shape[0]))
+    
     # Filter for Users with more than n products
     n = number_of_products
 
@@ -41,6 +60,9 @@ def reduce_users_prod (data, number_of_products):
 
     # Select Transactions from Users with morn than n products bought
     data = data[(data.user_id.isin(top_users))]
+
+    # Output
+    print('No. of Records after filtering: {0}'.format(data.shape[0]))
 
     return data
 

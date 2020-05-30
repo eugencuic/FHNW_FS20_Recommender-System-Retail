@@ -113,7 +113,7 @@ def user_sim_v3(data):
     data = data / row_sums[:,None]
 
     # Multiply the matrix with itself
-    data = np.dot(data,data.T)
+    data = np.dot(data.astype(np.float32),data.astype(np.float32).T)
     
     # Convert result to numpy array
     similarity_matrix = np.array(data)
