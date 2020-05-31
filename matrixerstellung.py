@@ -69,28 +69,6 @@ def create_user_item_matrix(data,type='unary'):
 
         return matrix, unique_cols.tolist(), unique_rows.tolist()
 
-    if type == 'count_alt':
-    
-        # group by user and product and count the occurence
-        matrix_dense =  data.groupby(['user_id', 'product_id'])['rating'].sum().unstack(fill_value=0.0)
-        users = matrix_dense.index.tolist()
-        products = matrix_dense.columns.values.tolist()
-
-        # Get max values of each row
-        max_values = matrix_dense.max(axis=1)
-
-        # transform to numpy array for matrix multiplication
-        max_values = max_values.to_numpy()
-        matrix_dense = matrix_dense.to_numpy()
-        
-        # Normalize values between 0 and 1 by original matrix multiplied by max value of each row
-        matrix_dense = (matrix_dense.T / max_values).T
-
-        # transform matrix to sparse matrix to safe space 
-        matrix_sparse = csr_matrix(matrix_dense)
-
-        return matrix_sparse, products, users
-
 def calc_sparsity (data):
     """This function is used to test how much of the original data has empty values in the matrix.
 

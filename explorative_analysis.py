@@ -167,7 +167,7 @@ def cal_limit_orders_per_user(data, threshold):
     cutoff = n_of_ord_per_user[int(len(n_of_ord_per_user)*(1-threshold/100))]
 
     # calculate cutoff users
-    remainder = threshold
+    remainder = 1-threshold
     print("Bei {} Käufen pro Kunden können {} Prozent der Kunden eliminiert werden".format(cutoff, remainder))
 
     return cutoff

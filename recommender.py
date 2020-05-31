@@ -247,7 +247,8 @@ def calc_optimal_fold(data, max_fold):
 
     for i in range(1, max_fold, 1):
         U, s, VT = svds(data,i)
-
+        del U, VT
+        
         df.at[i-1, 'k'] = i
         df.at[i-1, 'singular_value_sigma'] = s[0]
 
