@@ -7,6 +7,15 @@ import squarify
 # Plots to analyze to understand setting for recommender
 
 def fig_prod_bought(data, safe):
+    """Produces a graphic to show how many times a product was bought
+
+    Arguments:
+        data {pandas_frame} -- Frame that contains all transactions
+        safe {bool} -- Boolean Value and option to save the plot
+
+    Returns:
+        Plot
+    """    
     font = {'family' : 'arial',
             'weight' : 'light',
             'size'   : 14}
@@ -36,7 +45,15 @@ def fig_prod_bought(data, safe):
 
 
 def fig_prod_per_order(data, safe):
+    """Produces a graphic to show how many products per order have been bought
 
+    Arguments:
+        data {pandas_frame} -- Frame that contains all transactions
+        safe {bool} -- Boolean Value and option to save the plot
+
+    Returns:
+        Plot
+    """
     font = {'family' : 'arial',
             'weight' : 'light',
             'size'   : 14}
@@ -83,7 +100,15 @@ def fig_prod_per_order(data, safe):
 
 
 def fig_ord_per_department(data, safe):
+    """Produces a graphic to show how many products per department have been bought
 
+    Arguments:
+        data {pandas_frame} -- Frame that contains all transactions
+        safe {bool} -- Boolean Value and option to save the plot
+
+    Returns:
+        Plot
+    """
     font = {'family' : 'arial',
             'weight' : 'light',
             'size'   : 14}
@@ -117,15 +142,16 @@ def fig_ord_per_department(data, safe):
     else:
         plt.savefig('departments_bar.png', bbox_inches='tight')
 
-def info_order_per_user(data):
-
-    # Number of orders per user
-    n_of_ord_per_user = data.groupby('user_id')['order_id'].nunique()
-
-    # Find the treshhold for the lowest 75% of data points
-    print(n_of_ord_per_user.describe())
 
 def fig_n_of_ord_per_user(data):
+    """Produces a graphic to show how many orders per user have been done
+
+    Arguments:
+        data {pandas_frame} -- Frame that contains all transactions
+
+    Returns:
+        Plot
+    """   
     font = {'family' : 'arial',
             'weight' : 'bold',
             'size'   : 14}
@@ -154,6 +180,15 @@ def fig_n_of_ord_per_user(data):
     plt.show()
 
 def cal_limit_orders_per_user(data, threshold):
+    """Calcualtes the threshold where to cut off ertain % of users
+
+    Arguments:
+        data {pandas_frame} -- Frame that contains all transactions
+        threshold {int} -- Number between 0-100 in % of users to cut off
+
+    Returns:
+        [int] -- Returns the number of orders where the cut off can happen
+    """    
     # Create data to be plot
     n_of_ord_per_user = data.groupby('user_id')['order_id'].count().value_counts()
 
@@ -167,7 +202,7 @@ def cal_limit_orders_per_user(data, threshold):
     cutoff = n_of_ord_per_user[int(len(n_of_ord_per_user)*(1-threshold/100))]
 
     # calculate cutoff users
-    remainder = 1-threshold
+    remainder = 100-threshold
     print("Bei {} Käufen pro Kunden können {} Prozent der Kunden eliminiert werden".format(cutoff, remainder))
 
     return cutoff

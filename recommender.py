@@ -233,13 +233,15 @@ def get_recommendations(matrix,similarities,neighbours,u,t):
 
 ######################### MODEL BASED APPROACH #########################
 
-
 def calc_optimal_fold(data, max_fold):
-    """[summary]
+    """Return the the optimal value to reduce transactions based on orders
 
     Arguments:
-        data {[type]} -- [description]
-        max_fold {[type]} -- [description]
+        data {matrix} -- User-Item Matrix
+        max_fold {int} -- How many folds to calculate
+
+    Returns:
+        Plot -- Plot on singular values (folds) and their importance
     """    
     columns =['k', 'singular_value_sigma']
     zero_data = np.zeros(shape=(max_fold-1,len(columns)))
@@ -262,60 +264,27 @@ def calc_optimal_fold(data, max_fold):
     plt.legend(loc='upper right')
     plt.show()
 
-
-def products_single_user_recommendations_mobelbased(user_id, predictions, original_purchases, n_of_recommendations):
-    """[summary]
+def products_recommendations_modelbased(u, predicted_ratings, matrix, n_of_recommendations):
+    """Create a Recommendation for given user
 
     Arguments:
-        user_id {[type]} -- [description]
-        predictions {[type]} -- [description]
-        original_purchases {[type]} -- [description]
-        n_of_recommendations {[type]} -- [description]
+        u {int} -- User Index
+        predicted_ratings {ndarray} -- Calculatet rating for each product and user based on the model
+        matrix {ndarray} -- User-Item Matrix
+        n_of_recommendations {int} -- Number of recommendations to return
 
     Returns:
-        [type] -- [description]
+        List -- List of indices of product reommendations
     """    
-    original_purchases.loc[user_id].sort_values(ascending=False).head()
-    products_user = original_purchases.loc[user_id]
-    bought_products_user = products_user[products_user > 0].index
-    products_recommended = predictions.loc[user_id].sort_values(ascending=False)
-    products_recommended = products_recommended.index
+    prod_user = pd.DataFrame(columns=['index','rating'])
+    prod_user['index'] = np.argsort(predicted_ratings[u,:])[::-1]
+    prod_user['rating'] = np.sort(predicted_ratings[u,:])[::-1]
 
-    res = products_recommended.difference(bought_products_user, sort=False)
+    # Produkte welche der User schon hat
+    products_user_u = list(matrix[u,:].nonzero()[1])
 
-    products_high_recommend = res[:n_of_recommendations].index
-    recommendations = list(set(products_high_recommend) - set(bought_products_user))
+    # Entferne die Produkte welche der User schon hat aus den Recommendations, und selektiere die top N
+    recommendations = prod_user[~prod_user['index'].isin(products_user_u)]
 
-    return recommendations
-
-
-def products_recommendations_mobelbased(user_index, predicted_rating, train_set_count, n_of_recommendations):
-    
-    # reconstruct dense matrix from sparse test matrix
-    matrix_count_dense = train_set_count.todense()
-    
-    # Create DataFrame for ease of use
-    df_matrix = pd.DataFrame(matrix_count_dense)
-
-    # Save only bought products
-    products_user = df_matrix.loc[user_index]
-    bought_products_user = products_user[products_user > 0].index
-
-    # Create Prediction DataFrame
-    preds_df = pd.DataFrame(predicted_rating)
-
-    # Extract recommendations values for user
-    products_recommended = preds_df.loc[user_index]
-
-    # drop bought products
-    products_recommended = products_recommended.drop(bought_products_user)
-
-    # sort predictions by rating
-    products_recommended = products_recommended.sort_values(ascending=False)
-
-
-    # get n highest recommendations
-    products_high_recommend = products_recommended.iloc[:n_of_recommendations].index
-
-    return products_high_recommend
+    return list(recommendations['index'].head(n_of_recommendations))
 

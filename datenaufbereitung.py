@@ -67,7 +67,15 @@ def reduce_users_prod (data, number_of_products):
     return data
 
 def reduce_user_purch(data, number_of_purchases):
+    """Filtering the input dataset for user with at least n products
 
+    Arguments:
+        data {DataFrame} -- Full Dataset with all Records
+        number_of_purchases {int} -- Number of minimal pruchases per User
+
+    Returns:
+        DataFrame -- Reduced Dataset
+    """   
     # Number of orders per user
     n_of_ord_per_user = data.groupby('user_id')['order_id'].nunique()
 

@@ -67,7 +67,7 @@ def create_user_item_matrix(data,type='unary'):
         # sort indices; not really needed, just cosmetics
         matrix.sort_indices()
 
-        return matrix, unique_cols.tolist(), unique_rows.tolist()
+        return matrix
 
 def calc_sparsity (data):
     """This function is used to test how much of the original data has empty values in the matrix.
@@ -118,7 +118,6 @@ def mask_test_train(data, split):
 
     Returns:
         ndarray -- Matrix for Training Set (Ratings masked)
-        ndarray -- Matrix for Test Set (All Ratings)
         list -- List of masked Users
         list -- List with User-Item Tuples of masked Ratings
     """    
@@ -147,15 +146,17 @@ def mask_test_train(data, split):
 def mask_test_train_count(data, split, rating_threshold):
     """Masking a percentage of all Ratings in a given Matrix
        with help from: https://jessesw.com/Rec-System/
+
     Arguments:
         data {ndarray} -- Full User-Item Matrix where Ratings will be masked
         split {float} -- Number between 0-1
+        rating_threshold {float} -- Number between 0-1 to sort out releant products for user
+
     Returns:
         ndarray -- Matrix for Training Set (Ratings masked)
-        ndarray -- Matrix for Test Set (All Ratings)
         list -- List of masked Users
         list -- List with User-Item Tuples of masked Ratings
-    """    
+    """   
     # create a copy of the full data for reduction
     training_set = data.copy()
 
